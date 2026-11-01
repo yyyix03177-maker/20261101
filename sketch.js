@@ -1,5 +1,5 @@
 // ==========================================
-// 樂風探索家：消失的旋律 - MP3 音檔專用版 sketch.js
+// 樂風探索家：消失的旋律 - 最終調整版 sketch.js
 // ==========================================
 
 let gameState = "START"; 
@@ -22,7 +22,7 @@ let floatingNotes = [];
 let confettiParticles = [];
 let scanAnimationAngle = 0;
 
-// 六大關卡與對應的 MP3 音檔路徑
+// 六大關卡資料（選項已更新為中英對照）
 const levelsData = [
   {
     id: "classical",
@@ -33,7 +33,7 @@ const levelsData = [
       "2. 結構嚴謹，具有豐富的聲部堆疊與演奏技巧。",
       "3. 旋律優雅典雅，歷史悠久且富有情緒起伏。"
     ],
-    options: ["爵士樂", "古典樂", "搖滾樂", "流行樂"],
+    options: ["爵士樂 (Jazz)", "古典樂 (Classical)", "搖滾樂 (Rock)", "流行樂 (Pop)"],
     correct: 1,
     knowledge: "【古典樂】強調複雜而精密的配器法，常見鋼琴、小提琴與管弦樂團協奏，注重嚴謹結構與聲部和聲。"
   },
@@ -46,7 +46,7 @@ const levelsData = [
       "2. 具有強烈的即興演奏（Improvisation）精神。",
       "3. 節奏具有切分音與獨特的搖擺感（Swing）。"
     ],
-    options: ["嘻哈", "電子音樂", "爵士樂", "古典樂"],
+    options: ["嘻哈 (Hip-hop)", "電子音樂 (Electronic)", "爵士樂 (Jazz)", "古典樂 (Classical)"],
     correct: 2,
     knowledge: "【爵士樂】起源於紐奧良，強調音樂家現場即興發揮、切分節奏（Syncopation）與搖擺樂風（Swing）。"
   },
@@ -59,7 +59,7 @@ const levelsData = [
       "2. 節奏鮮明強烈，充滿爆發力與能量。",
       "3. 常採用四四拍強烈重音與破音吉他音效。"
     ],
-    options: ["搖滾樂", "流行樂", "爵士樂", "電子音樂"],
+    options: ["搖滾樂 (Rock)", "流行樂 (Pop)", "爵士樂 (Jazz)", "電子音樂 (Electronic)"],
     correct: 0,
     knowledge: "【搖滾樂】發展於 1950 年代，以電吉他破音（Overdrive）與強勁重拍為核心，展現強烈情緒與個人風格。"
   },
@@ -72,7 +72,7 @@ const levelsData = [
       "2. 具有明確的主歌（Verse）與副歌（Chorus）結構。",
       "3. 融合多元樂器與電子錄音技術，具廣泛傳播性。"
     ],
-    options: ["古典樂", "流行樂", "嘻哈", "搖滾樂"],
+    options: ["古典樂 (Classical)", "流行樂 (Pop)", "嘻哈 (Hip-hop)", "搖滾樂 (Rock)"],
     correct: 1,
     knowledge: "【流行樂】為廣泛商業傳播而設計，結構通常包含前奏、主歌、副歌與過門，著重於動聽且記憶點極高的旋律。"
   },
@@ -85,7 +85,7 @@ const levelsData = [
       "2. 常使用經典樂曲取樣（Sampling）與刮盤（Scratch）。",
       "3. 低音重拍節奏感極強，展現街頭文化。"
     ],
-    options: ["爵士樂", "電子音樂", "嘻哈", "流行樂"],
+    options: ["爵士樂 (Jazz)", "電子音樂 (Electronic)", "嘻哈 (Hip-hop)", "流行樂 (Pop)"],
     correct: 2,
     knowledge: "【嘻哈】源自紐約布朗克斯區，結合饒舌、DJ 取樣節拍、街舞與塗鴉，是強烈展現節奏與韻律的文化音樂。"
   },
@@ -98,7 +98,7 @@ const levelsData = [
       "2. 採用電腦編曲與電子節拍機產生的精確節奏。",
       "3. 充滿未來感音色與規律重複的舞曲動感。"
     ],
-    options: ["電子音樂", "搖滾樂", "古典樂", "嘻哈"],
+    options: ["電子音樂 (Electronic)", "搖滾樂 (Rock)", "古典樂 (Classical)", "嘻哈 (Hip-hop)"],
     correct: 0,
     knowledge: "【電子音樂】利用電子樂器與數位音訊工作站（DAW）創作，運用各式合成器、濾波器與效果器營造多變音色。"
   }
@@ -114,7 +114,6 @@ function setup() {
   gameOsc = new p5.Oscillator('sine');
   gameOsc.amp(gameEnv);
 
-  // 在背景非同步載入所有 MP3 音檔
   for (let lvl of levelsData) {
     audioFiles[lvl.id] = [];
     audioLoaded[lvl.id] = false;
@@ -122,7 +121,7 @@ function setup() {
       let snd = loadSound(
         filePath,
         () => { audioLoaded[lvl.id] = true; },
-        () => { console.log("注意：找不到音檔 " + filePath + "，將自動啟用內建合成音樂備援。"); }
+        () => {}
       );
       audioFiles[lvl.id].push(snd);
     }
@@ -267,6 +266,7 @@ function drawIntroScreen() {
 function drawGameScreen() {
   let lvl = levelsData[currentLevel];
 
+  // 頂端資訊列（左上角改為純顯示目前關卡，不透露答案曲風）
   fill(255, 255, 255, 200);
   rectMode(CORNER);
   noStroke();
@@ -276,11 +276,11 @@ function drawGameScreen() {
   textSize(min(width * 0.04, 20));
   textStyle(BOLD);
   textAlign(LEFT, CENTER);
-  text(lvl.title, 20, 30);
+  text(`🔍 搜查中：第 ${currentLevel + 1} 關 / 共 6 關`, 20, 30);
 
   textAlign(RIGHT, CENTER);
   fill(130, 110, 160);
-  text(`目前得分: ${floor(score)} 分 | 第 ${currentLevel + 1}/6 關`, width - 20, 30);
+  text(`目前得分: ${floor(score)} 分`, width - 20, 30);
 
   scanAnimationAngle += 0.03;
   let scanX = width / 2 + cos(scanAnimationAngle) * (width * 0.35);
