@@ -1,5 +1,5 @@
 // ==========================================
-// 樂風探索家：消失的旋律 - 最終調整版 sketch.js
+// 樂風探索家：消失的旋律 - 題目隨機版 sketch.js
 // ==========================================
 
 let gameState = "START"; 
@@ -22,11 +22,11 @@ let floatingNotes = [];
 let confettiParticles = [];
 let scanAnimationAngle = 0;
 
-// 六大關卡資料（選項已更新為中英對照）
-const levelsData = [
+// 原始六大關卡資料庫
+const originalLevelsData = [
   {
     id: "classical",
-    title: "第一關：古典樂（Classical）",
+    title: "古典樂（Classical）",
     files: ["assets/classical_1.mp3", "assets/classical_2.mp3"],
     clues: [
       "1. 常見樂器編制：鋼琴、小提琴及大型管弦樂團。",
@@ -34,12 +34,12 @@ const levelsData = [
       "3. 旋律優雅典雅，歷史悠久且富有情緒起伏。"
     ],
     options: ["爵士樂 (Jazz)", "古典樂 (Classical)", "搖滾樂 (Rock)", "流行樂 (Pop)"],
-    correct: 1,
+    correctText: "古典樂 (Classical)",
     knowledge: "【古典樂】強調複雜而精密的配器法，常見鋼琴、小提琴與管弦樂團協奏，注重嚴謹結構與聲部和聲。"
   },
   {
     id: "jazz",
-    title: "第二關：爵士樂（Jazz）",
+    title: "爵士樂（Jazz）",
     files: ["assets/jazz_1.mp3", "assets/jazz_2.mp3"],
     clues: [
       "1. 常見樂器：薩克斯風、鋼琴、低音提琴與爵士鼓。",
@@ -47,12 +47,12 @@ const levelsData = [
       "3. 節奏具有切分音與獨特的搖擺感（Swing）。"
     ],
     options: ["嘻哈 (Hip-hop)", "電子音樂 (Electronic)", "爵士樂 (Jazz)", "古典樂 (Classical)"],
-    correct: 2,
+    correctText: "爵士樂 (Jazz)",
     knowledge: "【爵士樂】起源於紐奧良，強調音樂家現場即興發揮、切分節奏（Syncopation）與搖擺樂風（Swing）。"
   },
   {
     id: "rock",
-    title: "第三關：搖滾樂（Rock）",
+    title: "搖滾樂（Rock）",
     files: ["assets/rock_1.mp3", "assets/rock_2.mp3"],
     clues: [
       "1. 核心樂器：電吉他、電貝斯、爵士鼓與強烈人聲。",
@@ -60,12 +60,12 @@ const levelsData = [
       "3. 常採用四四拍強烈重音與破音吉他音效。"
     ],
     options: ["搖滾樂 (Rock)", "流行樂 (Pop)", "爵士樂 (Jazz)", "電子音樂 (Electronic)"],
-    correct: 0,
+    correctText: "搖滾樂 (Rock)",
     knowledge: "【搖滾樂】發展於 1950 年代，以電吉他破音（Overdrive）與強勁重拍為核心，展現強烈情緒與個人風格。"
   },
   {
     id: "pop",
-    title: "第四關：流行樂（Pop）",
+    title: "流行樂（Pop）",
     files: ["assets/pop_1.mp3", "assets/pop_2.mp3"],
     clues: [
       "1. 旋律洗腦親切，易於大眾哼唱與記憶。",
@@ -73,12 +73,12 @@ const levelsData = [
       "3. 融合多元樂器與電子錄音技術，具廣泛傳播性。"
     ],
     options: ["古典樂 (Classical)", "流行樂 (Pop)", "嘻哈 (Hip-hop)", "搖滾樂 (Rock)"],
-    correct: 1,
+    correctText: "流行樂 (Pop)",
     knowledge: "【流行樂】為廣泛商業傳播而設計，結構通常包含前奏、主歌、副歌與過門，著重於動聽且記憶點極高的旋律。"
   },
   {
     id: "hiphop",
-    title: "第五關：嘻哈（Hip-hop）",
+    title: "嘻哈（Hip-hop）",
     files: ["assets/hiphop_1.mp3", "assets/hiphop_2.mp3"],
     clues: [
       "1. 特色元素：節奏饒舌（Rap）、人聲節奏口技（Beatbox）。",
@@ -86,12 +86,12 @@ const levelsData = [
       "3. 低音重拍節奏感極強，展現街頭文化。"
     ],
     options: ["爵士樂 (Jazz)", "電子音樂 (Electronic)", "嘻哈 (Hip-hop)", "流行樂 (Pop)"],
-    correct: 2,
+    correctText: "嘻哈 (Hip-hop)",
     knowledge: "【嘻哈】源自紐約布朗克斯區，結合饒舌、DJ 取樣節拍、街舞與塗鴉，是強烈展現節奏與韻律的文化音樂。"
   },
   {
     id: "electronic",
-    title: "第六關：電子音樂（Electronic）",
+    title: "電子音樂（Electronic）",
     files: ["assets/electronic_1.mp3", "assets/electronic_2.mp3"],
     clues: [
       "1. 使用樂器：電子合成器（Synthesizer）、數位音效處理。",
@@ -99,10 +99,12 @@ const levelsData = [
       "3. 充滿未來感音色與規律重複的舞曲動感。"
     ],
     options: ["電子音樂 (Electronic)", "搖滾樂 (Rock)", "古典樂 (Classical)", "嘻哈 (Hip-hop)"],
-    correct: 0,
+    correctText: "電子音樂 (Electronic)",
     knowledge: "【電子音樂】利用電子樂器與數位音訊工作站（DAW）創作，運用各式合成器、濾波器與效果器營造多變音色。"
   }
 ];
+
+let levelsData = []; // 遊戲中實際使用的隨機題目陣列
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -114,15 +116,11 @@ function setup() {
   gameOsc = new p5.Oscillator('sine');
   gameOsc.amp(gameEnv);
 
-  for (let lvl of levelsData) {
+  for (let lvl of originalLevelsData) {
     audioFiles[lvl.id] = [];
     audioLoaded[lvl.id] = false;
     for (let filePath of lvl.files) {
-      let snd = loadSound(
-        filePath,
-        () => { audioLoaded[lvl.id] = true; },
-        () => {}
-      );
+      let snd = loadSound(filePath, () => { audioLoaded[lvl.id] = true; }, () => {});
       audioFiles[lvl.id].push(snd);
     }
   }
@@ -252,11 +250,11 @@ function drawIntroScreen() {
   textStyle(NORMAL);
   fill(80, 80, 90);
   let introText = 
-    "1. 本次任務共有 6 個音樂案件待破解。\n" +
+    "1. 本次任務共有 6 個隨機音樂案件待破解。\n" +
     "2. 點擊「播放音樂」聆聽曲風片段。\n" +
     "3. 仔細閱讀畫面上的音樂特色線索。\n" +
     "4. 從四個選項中選出正確的樂風並「提交線索」。\n" +
-    "5. 每題答對可得 16.67 分，滿分 100 分！\n\n" +
+    "5. 每題答對可得 16.67 分，答錯會顯示正確答案與解析！\n\n" +
     "準備好開始辦案了嗎？";
   text(introText, width / 2 - min(width * 0.38, 240), height / 2 - 20);
 
@@ -266,7 +264,7 @@ function drawIntroScreen() {
 function drawGameScreen() {
   let lvl = levelsData[currentLevel];
 
-  // 頂端資訊列（左上角改為純顯示目前關卡，不透露答案曲風）
+  // 頂端資訊列（左上角僅顯示目前為第幾關，不透露答案）
   fill(255, 255, 255, 200);
   rectMode(CORNER);
   noStroke();
@@ -276,7 +274,7 @@ function drawGameScreen() {
   textSize(min(width * 0.04, 20));
   textStyle(BOLD);
   textAlign(LEFT, CENTER);
-  text(`🔍 搜查中：第 ${currentLevel + 1} 關 / 共 6 關`, 20, 30);
+  text(`🔍 隨機搜查中：第 ${currentLevel + 1} 關 / 共 6 關`, 20, 30);
 
   textAlign(RIGHT, CENTER);
   fill(130, 110, 160);
@@ -288,7 +286,7 @@ function drawGameScreen() {
   noStroke();
   ellipse(scanX, 120, 180, 80);
 
-  // 音樂控制面板與動態音波
+  // 音樂播放面板與動態音波
   fill(255);
   stroke(190, 210, 230);
   strokeWeight(2);
@@ -346,11 +344,11 @@ function drawGameScreen() {
     }
 
     if (answerSubmitted) {
-      if (i === lvl.correct) {
-        btnColor = color(140, 200, 160);
+      if (lvl.options[i] === lvl.correctText) {
+        btnColor = color(140, 200, 160); // 正確答案顯示綠色
         textColor = color(255);
-      } else if (selectedOption === i && i !== lvl.correct) {
-        btnColor = color(230, 150, 150);
+      } else if (selectedOption === i && lvl.options[i] !== lvl.correctText) {
+        btnColor = color(230, 150, 150); // 選錯的選項顯示粉紅色
         textColor = color(255);
       }
     }
@@ -371,7 +369,11 @@ function drawGameScreen() {
     fill(60, 80, 100);
     textSize(13);
     textAlign(CENTER, CENTER);
-    text(lvl.knowledge, width / 2, bottomY + 35, min(width * 0.85, 620), 65);
+    // 答錯時顯示提示與正確答案，答對顯示知識解析
+    let feedbackMsg = (selectedOption !== -1 && lvl.options[selectedOption] === lvl.correctText) 
+      ? `答對了！ ${lvl.knowledge}` 
+      : `❌ 答錯囉！正確答案是：【${lvl.correctText}】\n${lvl.knowledge}`;
+    text(feedbackMsg, width / 2, bottomY + 35, min(width * 0.85, 620), 65);
 
     let nextText = (currentLevel < levelsData.length - 1) ? "解鎖徽章，下一關 ➡️" : "查看調查結果 🏆";
     drawCustomButton(nextText, width / 2, bottomY + 115, 260, 50, color(150, 140, 190), color(255));
@@ -443,9 +445,9 @@ function drawEncyclopediaScreen() {
   ];
 
   rectMode(CENTER);
-  for (let i = 0; i < levelsData.length; i++) {
+  for (let i = 0; i < originalLevelsData.length; i++) {
     let pos = positions[i];
-    let lvl = levelsData[i];
+    let lvl = originalLevelsData[i];
 
     fill(255);
     stroke(190, 205, 225);
@@ -457,7 +459,7 @@ function drawEncyclopediaScreen() {
     fill(100, 80, 140);
     textSize(15);
     textStyle(BOLD);
-    text(lvl.title.split("：")[1], pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 12);
+    text(lvl.title, pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 12);
 
     fill(80, 90, 100);
     textSize(12);
@@ -567,7 +569,6 @@ function mousePressed() {
     let lvl = levelsData[currentLevel];
     let fileList = audioFiles[lvl.id];
 
-    // 播放 / 暫停音樂按鈕
     let btnPlayX = width / 2 + min(width * 0.3, 190);
     if (mouseX > btnPlayX - 55 && mouseX < btnPlayX + 55 && mouseY > 106 && mouseY < 144) {
       let isPlayingNow = (currentActiveTrack && currentActiveTrack.isPlaying()) || isSynthPlaying;
@@ -588,7 +589,6 @@ function mousePressed() {
       return;
     }
 
-    // 重頭播放按鈕
     if (mouseX > btnPlayX - 55 && mouseX < btnPlayX + 55 && mouseY > 154 && mouseY < 186) {
       stopAllTracks();
       if (fileList && fileList.length > 0 && audioLoaded[lvl.id] && fileList[0].isLoaded()) {
@@ -632,7 +632,7 @@ function mousePressed() {
           gameState = "FEEDBACK";
           stopAllTracks();
 
-          if (selectedOption === lvl.correct) {
+          if (lvl.options[selectedOption] === lvl.correctText) {
             score += 100 / levelsData.length;
             correctCount++;
             playSFX("CORRECT");
@@ -693,6 +693,8 @@ function touchStarted() {
 
 function resetGameData() {
   stopAllTracks();
+  // 每次重新開始遊戲時，將題目順序隨機打亂（Shuffle）
+  levelsData = shuffle([...originalLevelsData]);
   currentLevel = 0;
   score = 0;
   correctCount = 0;
