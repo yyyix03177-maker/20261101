@@ -1,5 +1,5 @@
 // ==========================================
-// 樂風探索家：消失的旋律 - 題目隨機版 sketch.js
+// 樂風探索家：消失的旋律 - 圖鑑文字排版修復版 sketch.js
 // ==========================================
 
 let gameState = "START"; 
@@ -104,7 +104,7 @@ const originalLevelsData = [
   }
 ];
 
-let levelsData = []; // 遊戲中實際使用的隨機題目陣列
+let levelsData = []; 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -264,7 +264,6 @@ function drawIntroScreen() {
 function drawGameScreen() {
   let lvl = levelsData[currentLevel];
 
-  // 頂端資訊列（左上角僅顯示目前為第幾關，不透露答案）
   fill(255, 255, 255, 200);
   rectMode(CORNER);
   noStroke();
@@ -286,7 +285,6 @@ function drawGameScreen() {
   noStroke();
   ellipse(scanX, 120, 180, 80);
 
-  // 音樂播放面板與動態音波
   fill(255);
   stroke(190, 210, 230);
   strokeWeight(2);
@@ -345,10 +343,10 @@ function drawGameScreen() {
 
     if (answerSubmitted) {
       if (lvl.options[i] === lvl.correctText) {
-        btnColor = color(140, 200, 160); // 正確答案顯示綠色
+        btnColor = color(140, 200, 160);
         textColor = color(255);
       } else if (selectedOption === i && lvl.options[i] !== lvl.correctText) {
-        btnColor = color(230, 150, 150); // 選錯的選項顯示粉紅色
+        btnColor = color(230, 150, 150);
         textColor = color(255);
       }
     }
@@ -369,7 +367,6 @@ function drawGameScreen() {
     fill(60, 80, 100);
     textSize(13);
     textAlign(CENTER, CENTER);
-    // 答錯時顯示提示與正確答案，答對顯示知識解析
     let feedbackMsg = (selectedOption !== -1 && lvl.options[selectedOption] === lvl.correctText) 
       ? `答對了！ ${lvl.knowledge}` 
       : `❌ 答錯囉！正確答案是：【${lvl.correctText}】\n${lvl.knowledge}`;
@@ -411,7 +408,7 @@ function drawResultScreen() {
   let badges = ["🎻", "🎷", "🎸", "🎤", "🎧", "🎹"];
   textSize(28);
   let badgeStr = "";
-  for (let i = 0; i < levelsData.length; i++) {
+  for (let i = 0; i < originalLevelsData.length; i++) {
     badgeStr += (i < correctCount) ? badges[i] + " " : "🔒 ";
   }
   text(badgeStr, width / 2, height / 2 + 20);
@@ -425,23 +422,25 @@ function drawResultScreen() {
   drawCustomButton("📖 音樂圖鑑", width / 2 + 110, height / 2 + 140, 180, 48, color(140, 170, 210), color(255));
 }
 
+// 修正後的知識圖鑑排版（卡片更大、字型適中，解決文字跑掉問題）
 function drawEncyclopediaScreen() {
   noStroke();
   fill(70, 90, 120);
   textAlign(CENTER, CENTER);
   textSize(24);
   textStyle(BOLD);
-  text("📖 音樂知識圖鑑", width / 2, 40);
+  text("📖 音樂知識圖鑑", width / 2, 35);
 
-  let cardW = min(width * 0.42, 320);
-  let cardH = 130;
+  let cardW = min(width * 0.44, 340);
+  let cardH = 145; // 增加卡片高度以容納完整文字
   let startX = width / 2 - cardW / 2 - 15;
   let endX = width / 2 + cardW / 2 + 15;
 
+  // 調整三列排版的 Y 軸間距
   let positions = [
-    { x: startX, y: 140 }, { x: endX, y: 140 },
-    { x: startX, y: 290 }, { x: endX, y: 290 },
-    { x: startX, y: 440 }, { x: endX, y: 440 }
+    { x: startX, y: 145 }, { x: endX, y: 145 },
+    { x: startX, y: 300 }, { x: endX, y: 300 },
+    { x: startX, y: 455 }, { x: endX, y: 455 }
   ];
 
   rectMode(CENTER);
@@ -457,17 +456,17 @@ function drawEncyclopediaScreen() {
     noStroke();
     textAlign(LEFT, TOP);
     fill(100, 80, 140);
-    textSize(15);
+    textSize(14);
     textStyle(BOLD);
     text(lvl.title, pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 12);
 
     fill(80, 90, 100);
-    textSize(12);
+    textSize(11.5); // 適度縮小字體確保不溢出
     textStyle(NORMAL);
-    text(lvl.knowledge, pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 36, cardW - 30, cardH - 45);
+    text(lvl.knowledge, pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 35, cardW - 30, cardH - 40);
   }
 
-  drawCustomButton("返回主選單 🏠", width / 2, height - 50, 200, 45, color(150, 140, 190), color(255));
+  drawCustomButton("返回主選單 🏠", width / 2, height - 40, 200, 40, color(150, 140, 190), color(255));
 }
 
 function drawCustomButton(label, x, y, w, h, bgColor, textColor) {
@@ -678,7 +677,7 @@ function mousePressed() {
   }
 
   if (gameState === "ENCYCLOPEDIA") {
-    if (dist(mouseX, mouseY, width / 2, height - 50) < 100) {
+    if (dist(mouseX, mouseY, width / 2, height - 40) < 100) {
       resetGameData();
       gameState = "START";
     }
@@ -693,7 +692,6 @@ function touchStarted() {
 
 function resetGameData() {
   stopAllTracks();
-  // 每次重新開始遊戲時，將題目順序隨機打亂（Shuffle）
   levelsData = shuffle([...originalLevelsData]);
   currentLevel = 0;
   score = 0;
