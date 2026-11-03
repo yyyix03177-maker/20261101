@@ -1,5 +1,5 @@
 // ==========================================
-// 樂風探索家：消失的旋律 - 圖鑑文字排版修復版 sketch.js
+// 樂風探索家：消失的旋律 - 圖鑑排版修正版 sketch.js
 // ==========================================
 
 let gameState = "START"; 
@@ -26,7 +26,8 @@ let scanAnimationAngle = 0;
 const originalLevelsData = [
   {
     id: "classical",
-    title: "古典樂（Classical）",
+    title: "第一關：古典樂（Classical）",
+    shortTitle: "古典樂 (Classical)",
     files: ["assets/classical_1.mp3", "assets/classical_2.mp3"],
     clues: [
       "1. 常見樂器編制：鋼琴、小提琴及大型管弦樂團。",
@@ -35,11 +36,14 @@ const originalLevelsData = [
     ],
     options: ["爵士樂 (Jazz)", "古典樂 (Classical)", "搖滾樂 (Rock)", "流行樂 (Pop)"],
     correctText: "古典樂 (Classical)",
-    knowledge: "【古典樂】強調複雜而精密的配器法，常見鋼琴、小提琴與管弦樂團協奏，注重嚴謹結構與聲部和聲。"
+    knowledgeLine1: "強調複雜而精密的配器法，",
+    knowledgeLine2: "常見鋼琴、小提琴與管弦樂團，",
+    knowledgeLine3: "注重嚴謹結構與聲部和聲。"
   },
   {
     id: "jazz",
-    title: "爵士樂（Jazz）",
+    title: "第二關：爵士樂（Jazz）",
+    shortTitle: "爵士樂 (Jazz)",
     files: ["assets/jazz_1.mp3", "assets/jazz_2.mp3"],
     clues: [
       "1. 常見樂器：薩克斯風、鋼琴、低音提琴與爵士鼓。",
@@ -48,11 +52,14 @@ const originalLevelsData = [
     ],
     options: ["嘻哈 (Hip-hop)", "電子音樂 (Electronic)", "爵士樂 (Jazz)", "古典樂 (Classical)"],
     correctText: "爵士樂 (Jazz)",
-    knowledge: "【爵士樂】起源於紐奧良，強調音樂家現場即興發揮、切分節奏（Syncopation）與搖擺樂風（Swing）。"
+    knowledgeLine1: "起源於紐奧良，強調音樂家",
+    knowledgeLine2: "現場即興發揮、切分節奏",
+    knowledgeLine3: "與獨特的搖擺樂風 (Swing)。"
   },
   {
     id: "rock",
-    title: "搖滾樂（Rock）",
+    title: "第三關：搖滾樂（Rock）",
+    shortTitle: "搖滾樂 (Rock)",
     files: ["assets/rock_1.mp3", "assets/rock_2.mp3"],
     clues: [
       "1. 核心樂器：電吉他、電貝斯、爵士鼓與強烈人聲。",
@@ -61,11 +68,14 @@ const originalLevelsData = [
     ],
     options: ["搖滾樂 (Rock)", "流行樂 (Pop)", "爵士樂 (Jazz)", "電子音樂 (Electronic)"],
     correctText: "搖滾樂 (Rock)",
-    knowledge: "【搖滾樂】發展於 1950 年代，以電吉他破音（Overdrive）與強勁重拍為核心，展現強烈情緒與個人風格。"
+    knowledgeLine1: "發展於 1950 年代，以電吉他",
+    knowledgeLine2: "破音與強勁重拍為核心，",
+    knowledgeLine3: "展現強烈情緒與個人風格。"
   },
   {
     id: "pop",
-    title: "流行樂（Pop）",
+    title: "第四關：流行樂（Pop）",
+    shortTitle: "流行樂 (Pop)",
     files: ["assets/pop_1.mp3", "assets/pop_2.mp3"],
     clues: [
       "1. 旋律洗腦親切，易於大眾哼唱與記憶。",
@@ -74,11 +84,14 @@ const originalLevelsData = [
     ],
     options: ["古典樂 (Classical)", "流行樂 (Pop)", "嘻哈 (Hip-hop)", "搖滾樂 (Rock)"],
     correctText: "流行樂 (Pop)",
-    knowledge: "【流行樂】為廣泛商業傳播而設計，結構通常包含前奏、主歌、副歌與過門，著重於動聽且記憶點極高的旋律。"
+    knowledgeLine1: "為廣泛商業傳播而設計，",
+    knowledgeLine2: "結構包含主歌與副歌，",
+    knowledgeLine3: "著重於動聽且記憶點高的旋律。"
   },
   {
     id: "hiphop",
-    title: "嘻哈（Hip-hop）",
+    title: "第五關：嘻哈（Hip-hop）",
+    shortTitle: "嘻哈 (Hip-hop)",
     files: ["assets/hiphop_1.mp3", "assets/hiphop_2.mp3"],
     clues: [
       "1. 特色元素：節奏饒舌（Rap）、人聲節奏口技（Beatbox）。",
@@ -87,11 +100,14 @@ const originalLevelsData = [
     ],
     options: ["爵士樂 (Jazz)", "電子音樂 (Electronic)", "嘻哈 (Hip-hop)", "流行樂 (Pop)"],
     correctText: "嘻哈 (Hip-hop)",
-    knowledge: "【嘻哈】源自紐約布朗克斯區，結合饒舌、DJ 取樣節拍、街舞與塗鴉，是強烈展現節奏與韻律的文化音樂。"
+    knowledgeLine1: "源自紐約布朗克斯區，結合",
+    knowledgeLine2: "饒舌、DJ取樣節拍與街舞，",
+    knowledgeLine3: "是強烈展現街頭文化的音樂。"
   },
   {
     id: "electronic",
-    title: "電子音樂（Electronic）",
+    title: "第六關：電子音樂（Electronic）",
+    shortTitle: "電子音樂 (Electronic)",
     files: ["assets/electronic_1.mp3", "assets/electronic_2.mp3"],
     clues: [
       "1. 使用樂器：電子合成器（Synthesizer）、數位音效處理。",
@@ -100,7 +116,9 @@ const originalLevelsData = [
     ],
     options: ["電子音樂 (Electronic)", "搖滾樂 (Rock)", "古典樂 (Classical)", "嘻哈 (Hip-hop)"],
     correctText: "電子音樂 (Electronic)",
-    knowledge: "【電子音樂】利用電子樂器與數位音訊工作站（DAW）創作，運用各式合成器、濾波器與效果器營造多變音色。"
+    knowledgeLine1: "利用電子樂器與數位音訊工作站",
+    knowledgeLine2: "創作，運用各式合成器與",
+    knowledgeLine3: "效果器營造多變未來感音色。"
   }
 ];
 
@@ -367,9 +385,10 @@ function drawGameScreen() {
     fill(60, 80, 100);
     textSize(13);
     textAlign(CENTER, CENTER);
+    let fullKnowledge = `【${lvl.correctText.split(" ")[0]}】${lvl.knowledgeLine1}${lvl.knowledgeLine2}${lvl.knowledgeLine3}`;
     let feedbackMsg = (selectedOption !== -1 && lvl.options[selectedOption] === lvl.correctText) 
-      ? `答對了！ ${lvl.knowledge}` 
-      : `❌ 答錯囉！正確答案是：【${lvl.correctText}】\n${lvl.knowledge}`;
+      ? `答對了！ ${fullKnowledge}` 
+      : `❌ 答錯囉！正確答案是：【${lvl.correctText}】\n${fullKnowledge}`;
     text(feedbackMsg, width / 2, bottomY + 35, min(width * 0.85, 620), 65);
 
     let nextText = (currentLevel < levelsData.length - 1) ? "解鎖徽章，下一關 ➡️" : "查看調查結果 🏆";
@@ -422,25 +441,24 @@ function drawResultScreen() {
   drawCustomButton("📖 音樂圖鑑", width / 2 + 110, height / 2 + 140, 180, 48, color(140, 170, 210), color(255));
 }
 
-// 修正後的知識圖鑑排版（卡片更大、字型適中，解決文字跑掉問題）
+// 完美修復後的知識圖鑑排版（使用精準座標與分行顯示，絕對不跑版）
 function drawEncyclopediaScreen() {
   noStroke();
   fill(70, 90, 120);
   textAlign(CENTER, CENTER);
-  textSize(24);
+  textSize(22);
   textStyle(BOLD);
-  text("📖 音樂知識圖鑑", width / 2, 35);
+  text("📖 音樂知識圖鑑", width / 2, 40);
 
-  let cardW = min(width * 0.44, 340);
-  let cardH = 145; // 增加卡片高度以容納完整文字
+  let cardW = min(width * 0.42, 320);
+  let cardH = 145;
   let startX = width / 2 - cardW / 2 - 15;
   let endX = width / 2 + cardW / 2 + 15;
 
-  // 調整三列排版的 Y 軸間距
   let positions = [
-    { x: startX, y: 145 }, { x: endX, y: 145 },
-    { x: startX, y: 300 }, { x: endX, y: 300 },
-    { x: startX, y: 455 }, { x: endX, y: 455 }
+    { x: startX, y: 150 }, { x: endX, y: 150 },
+    { x: startX, y: 310 }, { x: endX, y: 310 },
+    { x: startX, y: 470 }, { x: endX, y: 470 }
   ];
 
   rectMode(CENTER);
@@ -448,25 +466,30 @@ function drawEncyclopediaScreen() {
     let pos = positions[i];
     let lvl = originalLevelsData[i];
 
+    // 繪製白色卡片外框
     fill(255);
     stroke(190, 205, 225);
     strokeWeight(1.5);
     rect(pos.x, pos.y, cardW, cardH, 12);
 
+    // 標題文字
     noStroke();
     textAlign(LEFT, TOP);
     fill(100, 80, 140);
-    textSize(14);
+    textSize(15);
     textStyle(BOLD);
-    text(lvl.title, pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 12);
+    text(lvl.shortTitle, pos.x - cardW / 2 + 20, pos.y - cardH / 2 + 15);
 
-    fill(80, 90, 100);
-    textSize(11.5); // 適度縮小字體確保不溢出
+    // 知識內容分行顯示（確保不超出卡片範圍）
+    fill(70, 80, 90);
+    textSize(12);
     textStyle(NORMAL);
-    text(lvl.knowledge, pos.x - cardW / 2 + 15, pos.y - cardH / 2 + 35, cardW - 30, cardH - 40);
+    text(lvl.knowledgeLine1, pos.x - cardW / 2 + 20, pos.y - cardH / 2 + 45);
+    text(lvl.knowledgeLine2, pos.x - cardW / 2 + 20, pos.y - cardH / 2 + 67);
+    text(lvl.knowledgeLine3, pos.x - cardW / 2 + 20, pos.y - cardH / 2 + 89);
   }
 
-  drawCustomButton("返回主選單 🏠", width / 2, height - 40, 200, 40, color(150, 140, 190), color(255));
+  drawCustomButton("返回主選單 🏠", width / 2, height - 45, 200, 40, color(150, 140, 190), color(255));
 }
 
 function drawCustomButton(label, x, y, w, h, bgColor, textColor) {
@@ -677,7 +700,7 @@ function mousePressed() {
   }
 
   if (gameState === "ENCYCLOPEDIA") {
-    if (dist(mouseX, mouseY, width / 2, height - 40) < 100) {
+    if (dist(mouseX, mouseY, width / 2, height - 45) < 100) {
       resetGameData();
       gameState = "START";
     }
